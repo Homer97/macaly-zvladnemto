@@ -94,6 +94,7 @@ export function FormSection() {
       });
     }
   } catch (err) {
+    console.error("Form submission failed:", err);
     setLoading(false);
     toast({
       variant: "destructive",
