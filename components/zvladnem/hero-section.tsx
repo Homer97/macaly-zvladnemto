@@ -32,7 +32,7 @@ export function HeroSection() {
           </h1>
           
           <p className="text-xl md:text-2xl text-zvladnem-textLight mb-8 max-w-3xl mx-auto">
-            Potřebujete s něčím pomoct? Stačí říct a my k Vám pošleme někoho šikovného .
+            Potřebujete s něčím pomoct? Stačí říct a my k Vám pošleme někoho šikovného.
           </p>
           
           <motion.div
