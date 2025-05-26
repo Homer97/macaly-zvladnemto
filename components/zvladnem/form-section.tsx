@@ -39,7 +39,7 @@ export function FormSection() {
     setFormState(prev => ({ ...prev, consent: checked }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted with data:", formState);
     
@@ -56,15 +56,25 @@ export function FormSection() {
     
     setLoading(true);
     
-    // Simulace odeslání formuláře
-    setTimeout(() => {
-      setLoading(false);
+    try {
+    const res = await fetch(actionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify(formState)
+    });
+
+    setLoading(false);
+
+    if (res.ok) {
       toast({
         title: "Formulář byl odeslán",
         description: "Děkujeme! Ozveme se vám do 24 hodin."
       });
-      
-      // Reset formuláře
+
+      // Reset form state
       setFormState({
         description: "",
         timing: "",
@@ -74,7 +84,23 @@ export function FormSection() {
         phone: "",
         consent: false
       });
-    }, 1500);
+    } else {
+      // Try to pull error message from Formspree
+      const errorData = await res.json();
+      toast({
+        variant: "destructive",
+        title: "Chyba při odeslání",
+        description: errorData.error || "Něco se pokazilo, zkuste to prosím znovu."
+      });
+    }
+  } catch (err) {
+    setLoading(false);
+    toast({
+      variant: "destructive",
+      title: "Chyba sítě",
+      description: "Nepodařilo se odeslat formulář. Zkontrolujte připojení a zkuste to znovu."
+    });
+  }
   };
 
   return (
@@ -98,7 +124,10 @@ export function FormSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <form onSubmit={handleSubmit}>
+          <form
+            action="https://formspree.io/f/xvgajyrl"
+            method="POST"
+            onSubmit={handleSubmit}>
             <div className="space-y-6">
               {/* Co potřebujete */}
               <div>
@@ -118,8 +147,8 @@ export function FormSection() {
                 <Label className="text-base font-medium block mb-2">Kdy byste chtěli práci provést? <span className="text-zvladnem-accent">*</span></Label>
                 <RadioGroup value={formState.timing} onValueChange={handleRadioChange} className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6">
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="dnes" id="dnes" />
-                    <Label htmlFor="dnes" className="cursor-pointer">Dnes</Label>
+                    <RadioGroupItem value="Co nejdříve" id="Co nejdříve" />
+                    <Label htmlFor="Co nejdříve" className="cursor-pointer">Co nejdříve</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="zitra" id="zitra" />
@@ -144,7 +173,7 @@ export function FormSection() {
                   name="location"
                   value={formState.location}
                   onChange={handleChange}
-                  placeholder="Např. Praha 6 – Dejvice"
+                  placeholder="Např. Karlovy Vary - Anglická 5"
                   className="bg-zvladnem-white"
                 />
               </div>
