@@ -38,7 +38,7 @@ export function FormSection() {
     console.log(`Consent changed to: ${checked}`);
     setFormState(prev => ({ ...prev, consent: checked }));
   };
-
+  const actionUrl = "https://formspree.io/f/xvgajyrl";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted with data:", formState);
@@ -94,6 +94,7 @@ export function FormSection() {
       });
     }
   } catch (err) {
+    console.error("Form submission failed:", err);
     setLoading(false);
     toast({
       variant: "destructive",
