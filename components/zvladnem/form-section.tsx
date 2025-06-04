@@ -40,7 +40,8 @@ export function FormSection() {
     setFormState(prev => ({ ...prev, consent: checked }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const actionUrl = "https://formspree.io/f/xvgajyrl";
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted with data:", formState);
     
@@ -75,7 +76,25 @@ export function FormSection() {
         phone: "",
         consent: false
       });
-    }, 1500);
+
+    } else {
+      // Try to pull error message from Formspree
+      const errorData = await res.json();
+      toast({
+        variant: "destructive",
+        title: "Chyba při odeslání",
+        description: errorData.error || "Něco se pokazilo, zkuste to prosím znovu."
+      });
+    }
+  } catch (err) {
+    console.error("Form submission failed:", err);
+    setLoading(false);
+    toast({
+      variant: "destructive",
+      title: "Chyba sítě",
+      description: "Nepodařilo se odeslat formulář. Zkontrolujte připojení a zkuste to znovu."
+    });
+  }
   };
 
   return (
