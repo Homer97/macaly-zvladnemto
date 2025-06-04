@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,7 @@ export function FormSection() {
     console.log(`Consent changed to: ${checked}`);
     setFormState(prev => ({ ...prev, consent: checked }));
   };
+
   const actionUrl = "https://formspree.io/f/xvgajyrl";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,25 +58,15 @@ export function FormSection() {
     
     setLoading(true);
     
-    try {
-    const res = await fetch(actionUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-      },
-      body: JSON.stringify(formState)
-    });
-
-    setLoading(false);
-
-    if (res.ok) {
+    // Simulace odeslání formuláře
+    setTimeout(() => {
+      setLoading(false);
       toast({
         title: "Formulář byl odeslán",
         description: "Děkujeme! Ozveme se vám do 24 hodin."
       });
-
-      // Reset form state
+      
+      // Reset formuláře
       setFormState({
         description: "",
         timing: "",
@@ -84,6 +76,7 @@ export function FormSection() {
         phone: "",
         consent: false
       });
+
     } else {
       // Try to pull error message from Formspree
       const errorData = await res.json();
