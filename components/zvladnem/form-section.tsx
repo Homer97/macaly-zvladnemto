@@ -39,7 +39,6 @@ export function FormSection() {
     console.log(`Consent changed to: ${checked}`);
     setFormState(prev => ({ ...prev, consent: checked }));
   };
-
   const actionUrl = "https://formspree.io/f/xvgajyrl";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,15 +57,25 @@ export function FormSection() {
     
     setLoading(true);
     
-    // Simulace odeslání formuláře
-    setTimeout(() => {
-      setLoading(false);
+    try {
+    const res = await fetch(actionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify(formState)
+    });
+
+    setLoading(false);
+
+    if (res.ok) {
       toast({
         title: "Formulář byl odeslán",
         description: "Děkujeme! Ozveme se vám do 24 hodin."
       });
-      
-      // Reset formuláře
+
+      // Reset form state
       setFormState({
         description: "",
         timing: "",
@@ -76,7 +85,6 @@ export function FormSection() {
         phone: "",
         consent: false
       });
-
     } else {
       // Try to pull error message from Formspree
       const errorData = await res.json();
