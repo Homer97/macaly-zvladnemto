@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -39,7 +40,7 @@ export function FormSection() {
     setFormState(prev => ({ ...prev, consent: checked }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted with data:", formState);
     
@@ -56,25 +57,15 @@ export function FormSection() {
     
     setLoading(true);
     
-    try {
-    const res = await fetch(actionUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-      },
-      body: JSON.stringify(formState)
-    });
-
-    setLoading(false);
-
-    if (res.ok) {
+    // Simulace odeslání formuláře
+    setTimeout(() => {
+      setLoading(false);
       toast({
         title: "Formulář byl odeslán",
         description: "Děkujeme! Ozveme se vám do 24 hodin."
       });
-
-      // Reset form state
+      
+      // Reset formuláře
       setFormState({
         description: "",
         timing: "",
@@ -84,23 +75,7 @@ export function FormSection() {
         phone: "",
         consent: false
       });
-    } else {
-      // Try to pull error message from Formspree
-      const errorData = await res.json();
-      toast({
-        variant: "destructive",
-        title: "Chyba při odeslání",
-        description: errorData.error || "Něco se pokazilo, zkuste to prosím znovu."
-      });
-    }
-  } catch (err) {
-    setLoading(false);
-    toast({
-      variant: "destructive",
-      title: "Chyba sítě",
-      description: "Nepodařilo se odeslat formulář. Zkontrolujte připojení a zkuste to znovu."
-    });
-  }
+    }, 1500);
   };
 
   return (
